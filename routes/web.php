@@ -17,9 +17,22 @@ $app->get('/', function () use ($app) {
 
 /**
  * Routes for resource article
- */
+
 $app->get('article', 'ArticlesController@all');
-$app->get('article/{id}', 'ArticlesController@get');
-$app->post('article', 'ArticlesController@add');
-$app->put('article/{id}', 'ArticlesController@put');
-$app->delete('article/{id}', 'ArticlesController@remove');
+$app->get('article/{id}', 'ArticlesController@get')->where('id', '[0-9]+');
+$app->get('article/{first}', 'ArticlesController@first')->where('first', 'first');
+*/
+
+$app->group(['prefix' => 'api/v1'], function($app)
+{
+	    resource('article', 'ArticlesController');
+});
+
+
+function resource($uri, $controller)
+{
+	global $app;
+	$app->get($uri, $controller.'@index');
+	$app->get($uri.'/viewin/{id}', $controller.'@find');
+	$app->get($uri.'/first', $controller.'@first');
+}
